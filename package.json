@@ -12,7 +12,8 @@
 	"author": "Varun Barad <varun@varunbarad.com>",
 	"license": "MIT",
 	"dependencies": {
-		"@fastify/static": "^6.10.0",
+		"@fastify/static": "6.10.0",
+		"bcryptjs": "2.4.3",
 		"dotenv": "16.0.3",
 		"fastify": "4.15.0",
 		"mongodb": "^5.2.0"
