@@ -1,0 +1,11 @@
+version: "3.1"
+services:
+  mongo:
+    container_name: node-auth-mongo
+    image: mongo:4.4.20-rc0-focal
+    environment:
+      MONGO_INITDB_DATABASE: authdb
+      MONGO_INITDB_ROOT_USERNAME: mongo-admin
+      MONGO_INITDB_ROOT_PASSWORD: admin-password
+    ports:
+      - "27017:27017"

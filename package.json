@@ -1,0 +1,23 @@
+{
+	"name": "node-auth",
+	"version": "1.0.0",
+	"description": "",
+	"main": "src/index.js",
+	"type": "module",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"format": "prettier --write '{**/*,*}.{js,ts,jsx,tsx}'",
+		"check-format": "prettier --check '{**/*,*}.{js,ts,jsx,tsx}'"
+	},
+	"author": "Varun Barad <varun@varunbarad.com>",
+	"license": "MIT",
+	"dependencies": {
+		"@fastify/static": "^6.10.0",
+		"dotenv": "16.0.3",
+		"fastify": "4.15.0",
+		"mongodb": "^5.2.0"
+	},
+	"devDependencies": {
+		"prettier": "2.8.7"
+	}
+}
