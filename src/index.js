@@ -17,6 +17,11 @@ async function startApp() {
 			root: path.join(__dirname, 'public'),
 		});
 
+		app.post('/api/register', {}, (request, reply) => {
+			console.log('request', request.body);
+			reply.send('{}');
+		});
+
 		await app.listen({ port: 3000 }, (err, address) => {
 			if (err) {
 				throw err;
