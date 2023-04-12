@@ -4,6 +4,7 @@ import fastifyStatic from '@fastify/static';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { connectDatabase } from './db.js';
+import { registerUser } from './accounts/register.js';
 
 // __dirname is not available in ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -17,9 +18,14 @@ async function startApp() {
 			root: path.join(__dirname, 'public'),
 		});
 
-		app.post('/api/register', {}, (request, reply) => {
-			console.log('request', request.body);
-			reply.send('{}');
+		app.post('/api/register', {}, async (request, reply) => {
+			try {
+				console.log('request', request.body);
+				const userId = await registerUser(request.body.email, request.body.password);
+				reply.send({ userId: userId });
+			} catch (e) {
+				console.error(e);
+			}
 		});
 
 		await app.listen({ port: 3000 }, (err, address) => {
