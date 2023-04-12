@@ -14,17 +14,46 @@
 	<button type="submit">Register</button>
 </form>
 
+<br>
+<hr>
+<br>
+
+<h3>Login form</h3>
+<form id="login-form">
+	<input type="email" name="email">
+	<input type="password" name="password">
+	<button type="submit">Register</button>
+</form>
+
 <script>
 	;(() => {
-		const form = document.getElementById("register-form");
-		form.addEventListener("submit", async (event) => {
+		const registerForm = document.getElementById("register-form");
+		registerForm.addEventListener("submit", async (event) => {
 			event.preventDefault();
 			try {
-				const formData = new FormData(form);
+				const formData = new FormData(registerForm);
 				const data = Object.fromEntries(formData.entries());
 				console.log(data);
 
 				await fetch("/api/register", {
+					method: "POST",
+					headers: { "Content-Type": "application/json; charset=UTF-8" },
+					body: JSON.stringify(data)
+				});
+			} catch (e) {
+				console.error(e);
+			}
+		});
+
+		const loginForm = document.getElementById("login-form");
+		loginForm.addEventListener("submit", async (event) => {
+			event.preventDefault();
+			try {
+				const formData = new FormData(loginForm);
+				const data = Object.fromEntries(formData.entries());
+				console.log(data);
+
+				await fetch("/api/authorize", {
 					method: "POST",
 					headers: { "Content-Type": "application/json; charset=UTF-8" },
 					body: JSON.stringify(data)
