@@ -1,6 +1,7 @@
 import './env.js';
 import { fastify } from 'fastify';
 import fastifyStatic from '@fastify/static';
+import fastifyCookie from 'fastify-cookie';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { connectDatabase } from './db.js';
@@ -15,6 +16,10 @@ const app = fastify();
 
 async function startApp() {
 	try {
+		app.register(fastifyCookie, {
+			secret: process.env.COOKIE_SECRET,
+		});
+
 		app.register(fastifyStatic, {
 			root: path.join(__dirname, 'public'),
 		});
@@ -33,10 +38,21 @@ async function startApp() {
 			try {
 				console.log('request', request.body);
 				const userId = await authorizeUser(request.body.email, request.body.password);
-				reply.send({ userId: userId });
+				reply
+					.setCookie('testCookie', 'the value is the second parameter', {
+						path: '/',
+						domain: 'localhost',
+						httpOnly: true,
+					})
+					.send({ userId: userId });
 			} catch (e) {
 				console.error(e);
 			}
+		});
+
+		app.get('/test', {}, (request, reply) => {
+			console.log(request.cookies.testCookie);
+			reply.send({ data: 'booh' });
 		});
 
 		await app.listen({ port: 3000 }, (err, address) => {
