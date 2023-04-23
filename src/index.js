@@ -42,15 +42,10 @@ async function startApp() {
 
 				if (isAuthorized) {
 					await logUserIn(userId, request, reply);
+					reply.send({ data: 'User logged in' });
+				} else {
+					reply.send({ data: 'Auth failed' });
 				}
-
-				reply
-					.setCookie('testCookie', 'the value is the second parameter', {
-						path: '/',
-						domain: 'localhost',
-						httpOnly: true,
-					})
-					.send({ userId: isAuthorized });
 			} catch (e) {
 				console.error(e);
 			}
