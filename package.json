@@ -17,6 +17,8 @@
 		"bcryptjs": "2.4.3",
 		"dotenv": "16.0.3",
 		"fastify": "4.15.0",
+		"fastify-cookie": "^5.7.0",
+		"jsonwebtoken": "^9.0.0",
 		"mongodb": "^5.2.0"
 	},
 	"devDependencies": {
