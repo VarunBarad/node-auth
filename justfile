@@ -13,3 +13,7 @@ format:
 # Check code formatting
 check-format:
 	npm run check-format
+
+# Run the dev server
+dev:
+	nodemon src/index.js
