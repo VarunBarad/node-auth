@@ -8,6 +8,7 @@ import { connectDatabase } from './db.js';
 import { registerUser } from './accounts/register.js';
 import { authorizeUser } from './accounts/authorize.js';
 import { logUserIn } from './accounts/logUserIn.js';
+import { getUserFromCookies } from './accounts/user.js';
 
 // __dirname is not available in ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -51,9 +52,23 @@ async function startApp() {
 			}
 		});
 
-		app.get('/test', {}, (request, reply) => {
-			console.log(request.cookies.testCookie);
-			reply.send({ data: 'booh' });
+		app.get('/test', {}, async (request, reply) => {
+			try {
+				// verify user login
+				const user = await getUserFromCookies(request);
+				// return user email, if it exists, otherwise return unauthorized
+				if (user?._id) {
+					reply.send({
+						data: user,
+					});
+				} else {
+					reply.send({
+						data: 'User lookup failed',
+					});
+				}
+			} catch (e) {
+				throw new Error(e);
+			}
 		});
 
 		await app.listen({ port: 3000 }, (err, address) => {
