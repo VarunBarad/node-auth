@@ -1,5 +1,5 @@
 import { createSession } from './session.js';
-import { createTokens } from './tokens.js';
+import { refreshTokens } from './user.js';
 
 export async function logUserIn(userId, request, reply) {
 	const connectionInformation = {
@@ -9,20 +9,6 @@ export async function logUserIn(userId, request, reply) {
 	// create session
 	const sessionToken = await createSession(userId, connectionInformation);
 	// create JWT
-	const { accessToken, refreshToken } = await createTokens(sessionToken, userId);
 	// set cookie
-	const now = new Date();
-	const refreshExpires = now.setDate(now.getDate() + 30);
-	reply
-		.setCookie('accessToken', accessToken, {
-			path: '/',
-			httpOnly: true,
-			domain: 'localhost',
-		})
-		.setCookie('refreshToken', refreshToken, {
-			path: '/',
-			httpOnly: true,
-			domain: 'localhost',
-			expires: refreshExpires,
-		});
+	await refreshTokens(sessionToken, userId, reply);
 }

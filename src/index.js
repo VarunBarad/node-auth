@@ -30,9 +30,23 @@ async function startApp() {
 		app.post('/api/register', {}, async (request, reply) => {
 			try {
 				const userId = await registerUser(request.body.email, request.body.password);
-				reply.send({ userId: userId });
+				if (userId) {
+					await logUserIn(userId, request, reply);
+					reply.send({
+						data: {
+							status: 'SUCCESS',
+							userId: userId,
+						},
+					});
+				}
 			} catch (e) {
 				console.error(e);
+				reply.send({
+					data: {
+						status: 'FAILED',
+						userId: null,
+					},
+				});
 			}
 		});
 
@@ -42,21 +56,48 @@ async function startApp() {
 
 				if (isAuthorized) {
 					await logUserIn(userId, request, reply);
-					reply.send({ data: 'User logged in' });
+					reply.send({
+						data: {
+							status: 'SUCCESS',
+							userId: userId,
+						},
+					});
 				} else {
-					reply.send({ data: 'Auth failed' });
+					reply.send({
+						data: {
+							status: 'FAILED',
+							userId: null,
+						},
+					});
 				}
 			} catch (e) {
 				console.error(e);
+				reply.send({
+					data: {
+						status: 'FAILED',
+						userId: null,
+					},
+				});
 			}
 		});
 
 		app.post('/api/logout', {}, async (request, reply) => {
 			try {
 				await logUserOut(request, reply);
-				reply.send({ data: 'User logged out' });
+				reply.send({
+					data: {
+						status: 'SUCCESS',
+						userId: null,
+					},
+				});
 			} catch (e) {
 				console.error(e);
+				reply.send({
+					data: {
+						status: 'FAILED',
+						userId: null,
+					},
+				});
 			}
 		});
 
