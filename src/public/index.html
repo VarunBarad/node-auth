@@ -25,7 +25,24 @@
 	<button type="submit">Login</button>
 </form>
 
+<br>
+<hr>
+<br>
+
+<button onclick="logout()">Logout</button>
+
 <script>
+	async function logout() {
+		try {
+			const res = await fetch('/api/logout', {
+				method: 'POST',
+				// headers: {'Content-Type': 'application/json; charset=UTF-8'},
+			});
+		} catch (e) {
+			console.error(e);
+		}
+	}
+
 	;(() => {
 		const registerForm = document.getElementById("register-form");
 		registerForm.addEventListener("submit", async (event) => {
@@ -33,7 +50,6 @@
 			try {
 				const formData = new FormData(registerForm);
 				const data = Object.fromEntries(formData.entries());
-				console.log(data);
 
 				await fetch("/api/register", {
 					method: "POST",
@@ -51,7 +67,6 @@
 			try {
 				const formData = new FormData(loginForm);
 				const data = Object.fromEntries(formData.entries());
-				console.log(data);
 
 				await fetch("/api/authorize", {
 					method: "POST",

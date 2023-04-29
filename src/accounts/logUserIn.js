@@ -8,7 +8,6 @@ export async function logUserIn(userId, request, reply) {
 	};
 	// create session
 	const sessionToken = await createSession(userId, connectionInformation);
-	console.log('sessionToken', sessionToken);
 	// create JWT
 	const { accessToken, refreshToken } = await createTokens(sessionToken, userId);
 	// set cookie

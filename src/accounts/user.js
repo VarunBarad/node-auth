@@ -21,16 +21,14 @@ export async function getUserFromCookies(request, reply) {
 			return user.findOne({
 				_id: new ObjectId(decodedAccessToken?.userId),
 			});
-		} else {
+		} else if (request?.cookies?.refreshToken) {
 			// decode refresh token
 			const refreshToken = request.cookies.refreshToken;
 			const decodedRefreshToken = jwt.verify(refreshToken, jwtSecret);
-			console.log('decodedRefreshToken', decodedRefreshToken);
 			// look up session
 			const currentSession = await session.findOne({
 				sessionToken: decodedRefreshToken?.sessionToken,
 			});
-			console.log('currentSession', currentSession);
 			// confirm session is valid
 			if (currentSession?.valid) {
 				// look up current user

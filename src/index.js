@@ -9,6 +9,7 @@ import { registerUser } from './accounts/register.js';
 import { authorizeUser } from './accounts/authorize.js';
 import { logUserIn } from './accounts/logUserIn.js';
 import { getUserFromCookies } from './accounts/user.js';
+import { logUserOut } from './accounts/logUserOut.js';
 
 // __dirname is not available in ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -28,7 +29,6 @@ async function startApp() {
 
 		app.post('/api/register', {}, async (request, reply) => {
 			try {
-				console.log('request', request.body);
 				const userId = await registerUser(request.body.email, request.body.password);
 				reply.send({ userId: userId });
 			} catch (e) {
@@ -38,7 +38,6 @@ async function startApp() {
 
 		app.post('/api/authorize', {}, async (request, reply) => {
 			try {
-				console.log('request', request.body);
 				const { isAuthorized, userId } = await authorizeUser(request.body.email, request.body.password);
 
 				if (isAuthorized) {
@@ -47,6 +46,15 @@ async function startApp() {
 				} else {
 					reply.send({ data: 'Auth failed' });
 				}
+			} catch (e) {
+				console.error(e);
+			}
+		});
+
+		app.post('/api/logout', {}, async (request, reply) => {
+			try {
+				await logUserOut(request, reply);
+				reply.send({ data: 'User logged out' });
 			} catch (e) {
 				console.error(e);
 			}
@@ -77,7 +85,6 @@ async function startApp() {
 			}
 			console.log(`🚀 Server is running on ${address}`);
 		});
-		console.log('Server is running on port 3000');
 	} catch (err) {
 		console.error(err);
 	}

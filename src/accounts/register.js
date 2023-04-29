@@ -5,10 +5,8 @@ export async function registerUser(email, password) {
 	const { user } = await import('../user/user.js');
 
 	const salt = await genSalt(10);
-	console.log('salt', salt);
 
 	const hashedPassword = await hash(password, salt);
-	console.log('hashedPassword', hashedPassword);
 
 	// Store in database
 	const result = await user.insertOne({

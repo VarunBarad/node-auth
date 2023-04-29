@@ -13,7 +13,7 @@ export async function connectDatabase() {
 		// Confirm connection
 		await client.db('admin').command({ ping: 1 });
 
-		console.log('🗄️ Connected to MongoDB');
+		console.log('🗄️  Connected to MongoDB');
 	} catch (err) {
 		console.error('Failed to connect to MongoDB');
 		console.error(err);
