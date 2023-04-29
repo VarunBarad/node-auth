@@ -55,7 +55,7 @@ async function startApp() {
 		app.get('/test', {}, async (request, reply) => {
 			try {
 				// verify user login
-				const user = await getUserFromCookies(request);
+				const user = await getUserFromCookies(request, reply);
 				// return user email, if it exists, otherwise return unauthorized
 				if (user?._id) {
 					reply.send({
