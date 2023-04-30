@@ -56,11 +56,13 @@ export async function refreshTokens(sessionToken, userId, reply) {
 			.setCookie('accessToken', accessToken, {
 				path: '/',
 				httpOnly: true,
+				secure: true,
 				domain: 'localhost',
 			})
 			.setCookie('refreshToken', refreshToken, {
 				path: '/',
 				httpOnly: true,
+				secure: true,
 				domain: 'localhost',
 				expires: refreshExpires,
 			});
