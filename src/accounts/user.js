@@ -5,6 +5,7 @@ import { createTokens } from './tokens.js';
 const { ObjectId } = mongo;
 
 const jwtSecret = process.env.JWT_SECRET;
+const rootDomain = process.env.ROOT_DOMAIN;
 
 export async function getUserFromCookies(request, reply) {
 	try {
@@ -57,13 +58,13 @@ export async function refreshTokens(sessionToken, userId, reply) {
 				path: '/',
 				httpOnly: true,
 				secure: true,
-				domain: 'localhost',
+				domain: rootDomain,
 			})
 			.setCookie('refreshToken', refreshToken, {
 				path: '/',
 				httpOnly: true,
 				secure: true,
-				domain: 'localhost',
+				domain: rootDomain,
 				expires: refreshExpires,
 			});
 	} catch (e) {
