@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+</head>
+<body>
+<h1>Blah content goes here</h1>
+
+<h3>Register form</h3>
+<form id="register-form">
+	<input type="email" name="email">
+	<input type="password" name="password">
+	<button type="submit">Register</button>
+</form>
+
+<br>
+<hr>
+<br>
+
+<h3>Login form</h3>
+<form id="login-form">
+	<input type="email" name="email">
+	<input type="password" name="password">
+	<button type="submit">Login</button>
+</form>
+
+<br>
+<hr>
+<br>
+
+<button onclick="logout()">Logout</button>
+
+<script>
+	async function logout() {
+		try {
+			const res = await fetch('https://api.nodeauth.varun/api/logout', {
+				method: 'POST',
+				credentials: 'include',
+				// headers: {'Content-Type': 'application/json; charset=UTF-8'},
+			});
+		} catch (e) {
+			console.error(e);
+		}
+	}
+
+	;(() => {
+		const registerForm = document.getElementById("register-form");
+		registerForm.addEventListener("submit", async (event) => {
+			event.preventDefault();
+			try {
+				const formData = new FormData(registerForm);
+				const data = Object.fromEntries(formData.entries());
+
+				await fetch("https://api.nodeauth.varun/api/register", {
+					method: "POST",
+					headers: { "Content-Type": "application/json; charset=UTF-8" },
+					credentials: 'include',
+					body: JSON.stringify(data)
+				});
+			} catch (e) {
+				console.error(e);
+			}
+		});
+
+		const loginForm = document.getElementById("login-form");
+		loginForm.addEventListener("submit", async (event) => {
+			event.preventDefault();
+			try {
+				const formData = new FormData(loginForm);
+				const data = Object.fromEntries(formData.entries());
+
+				await fetch("https://api.nodeauth.varun/api/authorize", {
+					method: "POST",
+					headers: { "Content-Type": "application/json; charset=UTF-8" },
+					credentials: 'include',
+					body: JSON.stringify(data)
+				});
+			} catch (e) {
+				console.error(e);
+			}
+		});
+	})();
+</script>
+</body>
+</html>
