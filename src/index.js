@@ -11,6 +11,7 @@ import { authorizeUser } from './accounts/authorize.js';
 import { logUserIn } from './accounts/logUserIn.js';
 import { getUserFromCookies } from './accounts/user.js';
 import { logUserOut } from './accounts/logUserOut.js';
+import { sendEmail, mailInit } from './mail/index.js';
 
 // __dirname is not available in ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -20,6 +21,12 @@ const app = fastify();
 
 async function startApp() {
 	try {
+		await mailInit();
+		await sendEmail({
+			subject: 'Hello from NodeAuth',
+			html: '<h1>Hello from NodeAuth</h1>',
+		});
+
 		app.register(fastifyCors, {
 			origin: [/\.?nodeauth\.varun/],
 			credentials: true,
