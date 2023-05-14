@@ -16,7 +16,7 @@ export async function mailInit() {
 
 export async function sendEmail({
 	from = 'Fred Foo <fred@nodeauth.varun>',
-	to = 'blah@varunbarad.com',
+	to = 'Testing <blah@varunbarad.com>',
 	subject,
 	html,
 }) {
@@ -27,6 +27,8 @@ export async function sendEmail({
 			subject: subject,
 			html: html,
 		});
+
+		console.log(`Preview URL: ${nodeMailer.getTestMessageUrl(info)}`);
 		console.log('info', info);
 	} catch (e) {
 		console.error(e);
