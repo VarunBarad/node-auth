@@ -1,2 +1,5 @@
-build/
-node_modules/
+api/build/
+api/node_modules/
+
+ui/build
+ui/node_modules
