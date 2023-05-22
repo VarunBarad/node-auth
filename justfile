@@ -14,6 +14,14 @@ format:
 check-format:
 	npm run check-format
 
+# Start local database server
+db-start:
+  docker-compose up --detach
+
+# Stop local database server
+db-stop:
+  docker-compose stop
+
 # Run the dev server
 dev:
 	nodemon src/index.js
