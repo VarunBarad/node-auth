@@ -7,8 +7,8 @@
 	"scripts": {
 		"start": "node src/index.js",
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"format": "prettier --write '{**/*,*}.{js,ts,jsx,tsx}'",
-		"check-format": "prettier --check '{**/*,*}.{js,ts,jsx,tsx}'"
+		"format": "prettier --config ../.prettierrc.json --write '{**/*,*}.{js,ts,jsx,tsx}'",
+		"check-format": "prettier --config ../.prettierrc.json --check '{**/*,*}.{js,ts,jsx,tsx}'"
 	},
 	"author": "Varun Barad <varun@varunbarad.com>",
 	"license": "MIT",
