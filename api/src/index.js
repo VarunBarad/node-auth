@@ -12,7 +12,7 @@ import { logUserIn } from './accounts/logUserIn.js';
 import { getUserFromCookies } from './accounts/user.js';
 import { logUserOut } from './accounts/logUserOut.js';
 import { sendEmail, mailInit } from './mail/index.js';
-import { createVerifyEmailLink } from './accounts/verify.js';
+import { createVerifyEmailLink, validateVerifyEmail } from './accounts/verify.js';
 
 // __dirname is not available in ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -115,6 +115,22 @@ async function startApp() {
 						userId: null,
 					},
 				});
+			}
+		});
+
+		app.post('/api/verify', {}, async (request, reply) => {
+			try {
+				const { email, token } = request.body;
+				console.log('token, email', token, email);
+				const isValid = await validateVerifyEmail(token, email);
+				if (isValid) {
+					return reply.code(200).send();
+				} else {
+					return reply.code(401).send();
+				}
+			} catch (e) {
+				console.error(e);
+				return reply.code(401).send();
 			}
 		});
 

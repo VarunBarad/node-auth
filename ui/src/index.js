@@ -1,5 +1,7 @@
+import https from 'https';
 import { fastify } from 'fastify';
 import fastifyStatic from '@fastify/static';
+import fetch from 'cross-fetch';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -13,6 +15,39 @@ async function startApp() {
 	try {
 		app.register(fastifyStatic, {
 			root: path.join(__dirname, 'public'),
+		});
+
+		app.get('/verify/:email/:token', {}, async (request, reply) => {
+			try {
+				console.log("request", request.params.email, request.params.token);
+				const data = {
+					email: request.params.email,
+					token: request.params.token,
+				};
+
+				const httpsAgent = new https.Agent({
+					rejectUnauthorized: false,
+				});
+				const response = await fetch("https://api.nodeauth.varun/api/verify", {
+					method: "POST",
+					headers: { "Content-Type": "application/json; charset=UTF-8" },
+					credentials: 'include',
+					agent: httpsAgent,
+					body: JSON.stringify(data),
+				});
+				if (response.status === 200) {
+					return reply.redirect('/');
+				} else {
+					return reply.code(401).send();
+				}
+			} catch (e) {
+				console.log("e", e);
+				reply.send({
+					data: {
+						status: 'FAILED',
+					},
+				});
+			}
 		});
 
 		// app.get('/test', {}, async (request, reply) => {
