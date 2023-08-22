@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 
 const jwtSecret = process.env.JWT_SECRET;
+const rootDomain = process.env.ROOT_DOMAIN;
 
 export async function logUserOut(request, reply) {
 	try {
@@ -17,7 +18,17 @@ export async function logUserOut(request, reply) {
 			});
 		}
 		// remove cookies
-		reply.clearCookie('refreshToken').clearCookie('accessToken');
+		reply.clearCookie('refreshToken', {
+			path: '/',
+			httpOnly: true,
+			secure: true,
+			domain: rootDomain,
+		}).clearCookie('accessToken', {
+			path: '/',
+			httpOnly: true,
+			secure: true,
+			domain: rootDomain,
+		});
 	} catch (e) {
 		console.error(e);
 	}
