@@ -9,7 +9,7 @@ import { connectDatabase } from './db.js';
 import { registerUser } from './accounts/register.js';
 import { authorizeUser } from './accounts/authorize.js';
 import { logUserIn } from './accounts/logUserIn.js';
-import { getUserFromCookies } from './accounts/user.js';
+import { getUserFromCookies, changePassword } from './accounts/user.js';
 import { logUserOut } from './accounts/logUserOut.js';
 import { sendEmail, mailInit } from './mail/index.js';
 import { createVerifyEmailLink, validateVerifyEmail } from './accounts/verify.js';
@@ -115,6 +115,25 @@ async function startApp() {
 						userId: null,
 					},
 				});
+			}
+		});
+
+		app.post('/api/change-password', {}, async (request, reply) => {
+			try {
+				const user = await getUserFromCookies(request, reply);
+
+				if (user?.email?.address) {
+					const { isAuthorized, userId } = await authorizeUser(user.email.address, request.body.oldPassword);
+
+					if (isAuthorized) {
+						await changePassword(userId, request.body.newPassword);
+						return reply.code(200).send('All good');
+					}
+				}
+				return reply.code(401).send('All good');
+			} catch (e) {
+				console.error(e);
+				return reply.code(401).send();
 			}
 		});
 

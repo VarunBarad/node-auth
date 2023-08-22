@@ -29,6 +29,17 @@
 <hr>
 <br>
 
+<h3>Change Password</h3>
+<form id="change-form">
+	<input type="password" name="oldPassword">
+	<input type="password" name="newPassword">
+	<button type="submit">Change password</button>
+</form>
+
+<br>
+<hr>
+<br>
+
 <button onclick="logout()">Logout</button>
 
 <script>
@@ -71,6 +82,24 @@
 				const data = Object.fromEntries(formData.entries());
 
 				await fetch("https://api.nodeauth.varun/api/authorize", {
+					method: "POST",
+					headers: { "Content-Type": "application/json; charset=UTF-8" },
+					credentials: 'include',
+					body: JSON.stringify(data)
+				});
+			} catch (e) {
+				console.error(e);
+			}
+		});
+
+		const changeForm = document.getElementById("change-form");
+		changeForm.addEventListener("submit", async (event) => {
+			event.preventDefault();
+			try {
+				const formData = new FormData(changeForm);
+				const data = Object.fromEntries(formData.entries());
+
+				const res = await fetch("https://api.nodeauth.varun/api/change-password", {
 					method: "POST",
 					headers: { "Content-Type": "application/json; charset=UTF-8" },
 					credentials: 'include',
