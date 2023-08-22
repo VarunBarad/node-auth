@@ -22,6 +22,10 @@ db-start:
 db-stop:
   docker-compose stop
 
+# Start Caddy HTTP server
+caddy:
+  caddy run
+
 # Run the dev server
 dev:
 	nodemon src/index.js
