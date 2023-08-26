@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+</head>
+<body>
+<h3>Reset Password</h3>
+<form id="reset-password-form">
+	<label for="input-password">
+		Password
+		<input id="input-password" type="password" name="password" required>
+	</label>
+	<button type="submit">Reset Password</button>
+</form>
+
+<script>
+	function getFormValues(form) {
+		const formData = new FormData(form);
+		return Object.fromEntries(formData.entries());
+	}
+
+	const resetForm = document.getElementById("reset-password-form");
+	resetForm.addEventListener("submit", async (event) => {
+		event.preventDefault();
+		try {
+			const [uriEncodedEmail, expirationTimestamp, token] = window.location.pathname.split('/').slice(-3);
+
+			const data = {
+				...getFormValues(resetForm),
+				email: decodeURIComponent(uriEncodedEmail),
+				expirationTimestamp,
+				token,
+			};
+
+			await fetch("https://api.nodeauth.varun/api/reset", {
+				method: "POST",
+				headers: { "Content-Type": "application/json; charset=UTF-8" },
+				credentials: 'include',
+				body: JSON.stringify(data)
+			});
+		} catch (e) {
+			console.error(e);
+		}
+	});
+</script>
+</body>
+</html>

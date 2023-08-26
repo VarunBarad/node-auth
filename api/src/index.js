@@ -13,6 +13,7 @@ import { getUserFromCookies, changePassword } from './accounts/user.js';
 import { logUserOut } from './accounts/logUserOut.js';
 import { sendEmail, mailInit } from './mail/index.js';
 import { createVerifyEmailLink, validateVerifyEmail } from './accounts/verify.js';
+import { createResetLink, validateResetEmail } from './accounts/reset.js';
 
 // __dirname is not available in ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -137,6 +138,31 @@ async function startApp() {
 			}
 		});
 
+		app.post('/api/reset', {}, async (request, reply) => {
+			try {
+				const { email, password, token, expirationTimestamp} = request.body;
+				const isValid = await validateResetEmail(token, email, expirationTimestamp);
+				if (isValid) {
+					const { user } = await import("./user/user.js");
+
+					// find user
+					const foundUser = await user.findOne({
+						"email.address": email,
+					});
+
+					// change password
+					await changePassword(foundUser._id, password);
+
+					return reply.code(200).send('Password updated');
+				}
+
+				return reply.code(401).send('Reset failed');
+			} catch (e) {
+				console.error(e);
+				return reply.code(401).send();
+			}
+		});
+
 		app.post('/api/verify', {}, async (request, reply) => {
 			try {
 				const { email, token } = request.body;
@@ -147,6 +173,27 @@ async function startApp() {
 				} else {
 					return reply.code(401).send();
 				}
+			} catch (e) {
+				console.error(e);
+				return reply.code(401).send();
+			}
+		});
+
+		app.post('/api/forgot-password', {}, async (request, reply) => {
+			try {
+				const { email } = request.body;
+				console.log('email', email);
+				const emailLink = await createResetLink(email);
+				if (emailLink) {
+					// send email with reset link
+					await sendEmail({
+						to: email,
+						subject: 'Reset your password',
+						html: `<a href="${emailLink}">Reset</a>`,
+					});
+				}
+
+				return reply.code(200).send();
 			} catch (e) {
 				console.error(e);
 				return reply.code(401).send();

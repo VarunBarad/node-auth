@@ -40,6 +40,16 @@
 <hr>
 <br>
 
+<h3>Forgot Password</h3>
+<form id="forgot-password-form">
+	<input type="email" name="email">
+	<button type="submit">Send Forgot Email</button>
+</form>
+
+<br>
+<hr>
+<br>
+
 <button onclick="logout()">Logout</button>
 
 <script>
@@ -55,13 +65,17 @@
 		}
 	}
 
+	function getFormValues(form) {
+		const formData = new FormData(form);
+		return Object.fromEntries(formData.entries());
+	}
+
 	;(() => {
 		const registerForm = document.getElementById("register-form");
 		registerForm.addEventListener("submit", async (event) => {
 			event.preventDefault();
 			try {
-				const formData = new FormData(registerForm);
-				const data = Object.fromEntries(formData.entries());
+				const data = getFormValues(registerForm);
 
 				await fetch("https://api.nodeauth.varun/api/register", {
 					method: "POST",
@@ -78,8 +92,7 @@
 		loginForm.addEventListener("submit", async (event) => {
 			event.preventDefault();
 			try {
-				const formData = new FormData(loginForm);
-				const data = Object.fromEntries(formData.entries());
+				const data = getFormValues(loginForm);
 
 				await fetch("https://api.nodeauth.varun/api/authorize", {
 					method: "POST",
@@ -96,10 +109,26 @@
 		changeForm.addEventListener("submit", async (event) => {
 			event.preventDefault();
 			try {
-				const formData = new FormData(changeForm);
-				const data = Object.fromEntries(formData.entries());
+				const data = getFormValues(changeForm);
 
 				const res = await fetch("https://api.nodeauth.varun/api/change-password", {
+					method: "POST",
+					headers: { "Content-Type": "application/json; charset=UTF-8" },
+					credentials: 'include',
+					body: JSON.stringify(data)
+				});
+			} catch (e) {
+				console.error(e);
+			}
+		});
+
+		const forgotPasswordForm = document.getElementById("forgot-password-form");
+		forgotPasswordForm.addEventListener("submit", async (event) => {
+			event.preventDefault();
+			try {
+				const data = getFormValues(forgotPasswordForm);
+
+				await fetch("https://api.nodeauth.varun/api/forgot-password", {
 					method: "POST",
 					headers: { "Content-Type": "application/json; charset=UTF-8" },
 					credentials: 'include',
