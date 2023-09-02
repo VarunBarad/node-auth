@@ -92,3 +92,19 @@ export async function changePassword(userId, newPassword) {
 		console.log(e);
 	}
 }
+
+export async function register2fa(userId, secret) {
+	try {
+		const { user } = await import('../user/user.js');
+
+		return user.updateOne({
+			_id: userId,
+		}, {
+			$set: {
+				authenticator: secret,
+			},
+		});
+	} catch (e) {
+		console.log(e);
+	}
+}

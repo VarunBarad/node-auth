@@ -1,4 +1,5 @@
 import './env.js';
+import { authenticator } from '@otplib/preset-default';
 import { fastify } from 'fastify';
 import fastifyStatic from '@fastify/static';
 import fastifyCookie from '@fastify/cookie';
@@ -9,7 +10,7 @@ import { connectDatabase } from './db.js';
 import { registerUser } from './accounts/register.js';
 import { authorizeUser } from './accounts/authorize.js';
 import { logUserIn } from './accounts/logUserIn.js';
-import { getUserFromCookies, changePassword } from './accounts/user.js';
+import { getUserFromCookies, changePassword, register2fa } from './accounts/user.js';
 import { logUserOut } from './accounts/logUserOut.js';
 import { sendEmail, mailInit } from './mail/index.js';
 import { createVerifyEmailLink, validateVerifyEmail } from './accounts/verify.js';
@@ -217,6 +218,33 @@ async function startApp() {
 			} catch (e) {
 				throw new Error(e);
 			}
+		});
+
+		app.get('/api/user', {}, async (request, reply) => {
+			const user = await getUserFromCookies(request, reply);
+			if (user) {
+				return reply.send({
+					data: user,
+				});
+			} else {
+				return reply.send({});
+			}
+		});
+
+		app.post('/api/2fa-register', {}, async (request, reply) => {
+			const user = await getUserFromCookies(request, reply);
+			const { token, secret } = request.body;
+			const isValid = authenticator.verify({
+				token: token,
+				secret: secret,
+			});
+
+			if (user._id && isValid) {
+				await register2fa(user._id, secret);
+				return reply.send('success');
+			}
+
+			return reply.code(401).send();
 		});
 
 		await app.listen({ port: 3000 }, (err, address) => {

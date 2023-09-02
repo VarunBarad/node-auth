@@ -21,6 +21,10 @@ async function startApp() {
 			return reply.sendFile('reset.html');
 		});
 
+		app.get("/2fa", {}, async (request, reply) => {
+			return reply.sendFile('2fa.html');
+		});
+
 		app.get('/verify/:email/:token', {}, async (request, reply) => {
 			try {
 				console.log("request", request.params.email, request.params.token);
