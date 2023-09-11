@@ -71,9 +71,9 @@ async function startApp() {
 
 		app.post('/api/authorize', {}, async (request, reply) => {
 			try {
-				const { isAuthorized, userId } = await authorizeUser(request.body.email, request.body.password);
+				const { isAuthorized, userId, authenticatorSecret } = await authorizeUser(request.body.email, request.body.password);
 
-				if (isAuthorized) {
+				if (isAuthorized && !authenticatorSecret) {
 					await logUserIn(userId, request, reply);
 					reply.send({
 						data: {
@@ -81,8 +81,14 @@ async function startApp() {
 							userId: userId,
 						},
 					});
-				} else {
+				} else if (isAuthorized && authenticatorSecret) {
 					reply.send({
+						data: {
+							status: '2FA',
+						},
+					});
+				} else {
+					reply.code(401).send({
 						data: {
 							status: 'FAILED',
 							userId: null,
@@ -245,6 +251,25 @@ async function startApp() {
 			}
 
 			return reply.code(401).send();
+		});
+
+		app.post('/api/verify-2fa', {}, async (request, reply) => {
+			const { token, email, password } = request.body;
+			const { isAuthorized, userId, authenticatorSecret } = await authorizeUser(email, password);
+			if (isAuthorized && authenticatorSecret) {
+				const is2faValid = authenticator.verify({
+					token: token,
+					secret: authenticatorSecret,
+				});
+				if (userId && is2faValid) {
+					await logUserIn(userId, request, reply);
+					reply.send('success');
+				} else {
+					reply.code(401).send();
+				}
+			} else {
+				reply.code(401).send();
+			}
 		});
 
 		await app.listen({ port: 3000 }, (err, address) => {

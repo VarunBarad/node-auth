@@ -6,9 +6,21 @@ export async function authorizeUser(email, password) {
 
 	const userData = await user.findOne({ 'email.address': email });
 
-	const savedPassword = userData.password;
+	if (userData) {
+		const savedPassword = userData.password;
 
-	const isAuthorized = await compare(password, savedPassword);
+		const isAuthorized = await compare(password, savedPassword);
 
-	return { isAuthorized, userId: userData._id };
+		return {
+			isAuthorized,
+			userId: userData._id,
+			authenticatorSecret: userData.authenticator,
+		};
+	} else {
+		return {
+			isAuthorized: false,
+			userId: null,
+			authenticatorSecret: null,
+		};
+	}
 }
